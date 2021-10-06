@@ -1,6 +1,7 @@
 import React from "react";
 import { Box, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
+import Badge from "@material-ui/core/Badge";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -25,7 +26,16 @@ const ChatContent = (props) => {
 
   const { conversation } = props;
   const { latestMessageText, otherUser } = conversation;
+  console.log("con", conversation);
+  console.log("USERS", otherUser);
 
+  let counting = 0;
+  conversation.messages.forEach((message) => {
+    if (otherUser.id === message.senderId && message.isRead === false) {
+      return counting++;
+    }
+  });
+  console.log("counting", counting);
   return (
     <Box className={classes.root}>
       <Box>
@@ -36,6 +46,7 @@ const ChatContent = (props) => {
           {latestMessageText}
         </Typography>
       </Box>
+      <Badge color="secondary" badgeContent={counting} max={999} />
     </Box>
   );
 };
