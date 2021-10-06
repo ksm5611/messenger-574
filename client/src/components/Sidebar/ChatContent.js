@@ -26,8 +26,6 @@ const ChatContent = (props) => {
 
   const { conversation } = props;
   const { latestMessageText, otherUser } = conversation;
-  console.log("con", conversation);
-  console.log("USERS", otherUser);
 
   let counting = 0;
   conversation.messages.forEach((message) => {
@@ -35,7 +33,7 @@ const ChatContent = (props) => {
       return counting++;
     }
   });
-  console.log("counting", counting);
+
   return (
     <Box className={classes.root}>
       <Box>
