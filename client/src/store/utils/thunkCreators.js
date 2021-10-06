@@ -24,6 +24,7 @@ export const fetchUser = () => async (dispatch) => {
     dispatch(gotUser(data));
     if (data.id) {
       socket.emit("go-online", data.id);
+      socket.emit("join", data.id);
     }
   } catch (error) {
     console.error(error);
@@ -50,6 +51,7 @@ export const login = (credentials) => async (dispatch) => {
     await localStorage.setItem("messenger-token", data.token);
     dispatch(gotUser(data));
     socket.emit("go-online", data.id);
+    socket.emit("join", data.id);
   } catch (error) {
     console.error(error);
     dispatch(gotUser({ error: error.response.data.error || "Server Error" }));
