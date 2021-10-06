@@ -43,4 +43,28 @@ router.post("/", async (req, res, next) => {
   }
 });
 
+router.post("/read", async (req, res, next) => {
+  const { conversationId, senderId } = req.body;
+
+  try {
+    await Message.update(
+      { isRead: true },
+      {
+        where: {
+          conversationId,
+          senderId,
+        },
+      }
+    );
+
+    const messages = await Message.findAll({
+      where: { conversationId, senderId },
+    });
+
+    res.json({ messages });
+  } catch (error) {
+    next(error);
+  }
+});
+
 module.exports = router;
