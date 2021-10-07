@@ -19,6 +19,12 @@ const useStyles = makeStyles((theme) => ({
     color: "#9CADC8",
     letterSpacing: -0.17,
   },
+  unreadPreviewText: {
+    fontSize: 12,
+    color: "#000000",
+    letterSpacing: -0.17,
+    fontWeight: "bold",
+  },
 }));
 const StyledBadge = withStyles((theme) => ({
   badge: {
@@ -34,6 +40,7 @@ const ChatContent = (props) => {
   const classes = useStyles();
   const { conversation } = props;
   const { latestMessageText, otherUser } = conversation;
+  console.log(conversation);
 
   let counting = 0;
   conversation.messages.forEach((message) => {
@@ -48,9 +55,15 @@ const ChatContent = (props) => {
         <Typography className={classes.username}>
           {otherUser.username}
         </Typography>
-        <Typography className={classes.previewText}>
-          {latestMessageText}
-        </Typography>
+        {counting > 0 ? (
+          <Typography className={classes.unreadPreviewText}>
+            {latestMessageText}
+          </Typography>
+        ) : (
+          <Typography className={classes.previewText}>
+            {latestMessageText}
+          </Typography>
+        )}
       </Box>
       <StyledBadge color="primary" badgeContent={counting} max={999} />
     </Box>
