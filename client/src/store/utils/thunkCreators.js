@@ -5,6 +5,7 @@ import {
   addConversation,
   setNewMessage,
   setSearchedUsers,
+  readMessages,
 } from "../conversations";
 import { gotUser, setFetchingStatus } from "../user";
 
@@ -114,6 +115,27 @@ export const searchUsers = (searchTerm) => async (dispatch) => {
   try {
     const { data } = await axios.get(`/api/users/${searchTerm}`);
     dispatch(setSearchedUsers(data));
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+// to mark isRead to true then, notify to sender when user clicked conversation
+
+export const markAsRead = (conversationId, senderId) => async (dispatch) => {
+  try {
+    const { data } = await axios.post(`/api/messages/read`, {
+      conversationId: conversationId,
+      senderId: senderId,
+    });
+    const messageIds = data.messages.map((message) => message.id);
+
+    socket.emit("read-message", {
+      senderId,
+      messageIds: messageIds,
+      conversationId,
+    });
+    dispatch(readMessages(conversationId, messageIds));
   } catch (error) {
     console.error(error);
   }
