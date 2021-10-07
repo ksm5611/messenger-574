@@ -83,3 +83,23 @@ export const addNewConvoToStore = (state, recipientId, message) => {
     }
   });
 };
+
+// to update isRead to true
+
+export const readMessageFromconvoToStore = (state, payload) => {
+  const { conversationId, messageIds } = payload;
+  return state.map((convo) => {
+    if (convo.id === conversationId) {
+      const newConvo = { ...convo };
+      newConvo.messages = convo.messages.map((msg) => {
+        if (messageIds.includes(msg.id)) {
+          return { ...msg, isRead: true };
+        }
+        return msg;
+      });
+
+      return newConvo;
+    }
+    return convo;
+  });
+};
