@@ -40,7 +40,6 @@ const ChatContent = (props) => {
   const classes = useStyles();
   const { conversation } = props;
   const { latestMessageText, otherUser } = conversation;
-  console.log(conversation);
 
   let counting = 0;
   conversation.messages.forEach((message) => {
