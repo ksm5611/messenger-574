@@ -4,19 +4,8 @@ import { SenderBubble, OtherUserBubble } from "../ActiveChat";
 import moment from "moment";
 
 const Messages = (props) => {
-  const { messages, otherUser, userId } = props;
+  const { messages, otherUser, userId, latestReadMessageId } = props;
 
-  // to find messsage which already read
-  const findLatestMessageId = () => {
-    let latestMessageId = null;
-    messages.forEach((message) => {
-      if (message.senderId === userId && message.isRead) {
-        latestMessageId = message.id;
-      }
-    });
-
-    return latestMessageId;
-  };
   return (
     <Box>
       {messages.map((message) => {
@@ -30,7 +19,7 @@ const Messages = (props) => {
             time={time}
             otherUser={otherUser}
             isRead={message.isRead}
-            latestMessageId={findLatestMessageId()}
+            latestMessageId={latestReadMessageId}
           />
         ) : (
           <OtherUserBubble
