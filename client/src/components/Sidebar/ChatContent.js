@@ -38,15 +38,8 @@ const StyledBadge = withStyles((theme) => ({
 
 const ChatContent = (props) => {
   const classes = useStyles();
-  const { conversation } = props;
+  const { conversation, unReadMessageCounts } = props;
   const { latestMessageText, otherUser } = conversation;
-
-  let counting = 0;
-  conversation.messages.forEach((message) => {
-    if (otherUser.id === message.senderId && message.isRead === false) {
-      return counting++;
-    }
-  });
 
   return (
     <Box className={classes.root}>
@@ -54,7 +47,7 @@ const ChatContent = (props) => {
         <Typography className={classes.username}>
           {otherUser.username}
         </Typography>
-        {counting > 0 ? (
+        {unReadMessageCounts > 0 ? (
           <Typography className={classes.unreadPreviewText}>
             {latestMessageText}
           </Typography>
@@ -64,7 +57,11 @@ const ChatContent = (props) => {
           </Typography>
         )}
       </Box>
-      <StyledBadge color="primary" badgeContent={counting} max={999} />
+      <StyledBadge
+        color="primary"
+        badgeContent={unReadMessageCounts}
+        max={999}
+      />
     </Box>
   );
 };

@@ -21,7 +21,7 @@ const useStyles = makeStyles((theme) => ({
 
 const Chat = (props) => {
   const classes = useStyles();
-  const { conversation } = props;
+  const { conversation, unReadMessageCounts } = props;
   const { otherUser } = conversation;
 
   const handleClick = async (conversation) => {
@@ -35,10 +35,27 @@ const Chat = (props) => {
         username={otherUser.username}
         online={otherUser.online}
         sidebar={true}
+        unReadMessageCounts={unReadMessageCounts}
       />
       <ChatContent conversation={conversation} />
     </Box>
   );
+};
+
+// if we are using selector for example Reselect it will memoize the result
+const mapStateToProps = (state, ownProps) => {
+  const { conversation } = ownProps;
+  const { otherUser } = conversation;
+  let counting = 0;
+  conversation.messages.forEach((message) => {
+    if (otherUser.id === message.senderId && message.isRead === false) {
+      return counting++;
+    }
+  });
+
+  return {
+    unReadMessageCounts: counting,
+  };
 };
 
 const mapDispatchToProps = (dispatch) => {
@@ -49,4 +66,4 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-export default connect(null, mapDispatchToProps)(Chat);
+export default connect(mapStateToProps, mapDispatchToProps)(Chat);
