@@ -43,7 +43,7 @@ router.post("/", async (req, res, next) => {
   }
 });
 
-router.post("/read", async (req, res, next) => {
+router.put("/read", async (req, res, next) => {
   const { conversationId, senderId } = req.body;
 
   try {
@@ -59,9 +59,10 @@ router.post("/read", async (req, res, next) => {
 
     const messages = await Message.findAll({
       where: { conversationId, senderId },
+      order: [["createdAt", "DESC"]],
     });
 
-    res.json({ messages });
+    res.json({ messages, latestReadMessageId: messages[0].id });
   } catch (error) {
     next(error);
   }
