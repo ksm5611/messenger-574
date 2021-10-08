@@ -124,17 +124,18 @@ export const searchUsers = (searchTerm) => async (dispatch) => {
 
 export const markAsRead = (conversationId, senderId) => async (dispatch) => {
   try {
-    const { data } = await axios.post(`/api/messages/read`, {
+    const { data } = await axios.put(`/api/messages/read`, {
       conversationId: conversationId,
       senderId: senderId,
     });
     const messageIds = data.messages.map((message) => message.id);
-
     socket.emit("read-message", {
       senderId,
       messageIds: messageIds,
       conversationId,
+      latestReadMessageId: data.latestReadMessageId,
     });
+
     dispatch(readMessages(conversationId, messageIds));
   } catch (error) {
     console.error(error);
