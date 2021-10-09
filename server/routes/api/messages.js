@@ -43,9 +43,12 @@ router.post("/", async (req, res, next) => {
   }
 });
 
-router.put("/read", async (req, res, next) => {
+router.put("/readMessages", async (req, res, next) => {
   const { conversationId, senderId } = req.body;
   try {
+    if (!req.user) {
+      return res.sendStatus(401);
+    }
     await Message.update(
       { isRead: true },
       {

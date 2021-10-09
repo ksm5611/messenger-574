@@ -82,6 +82,7 @@ export const fetchConversations = () => async (dispatch) => {
 };
 
 const saveMessage = async (body) => {
+  console.log("post message body", body);
   const { data } = await axios.post("/api/messages", body);
   return data;
 };
@@ -124,10 +125,11 @@ export const searchUsers = (searchTerm) => async (dispatch) => {
 
 export const markAsRead = (conversationId, senderId) => async (dispatch) => {
   try {
-    const { data } = await axios.put(`/api/messages/read`, {
+    const { data } = await axios.put(`/api/messages/readMessages`, {
       conversationId: conversationId,
       senderId: senderId,
     });
+    console.log("here");
     socket.emit("read-message", {
       senderId,
       messages: data.messages,
