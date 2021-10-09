@@ -16,7 +16,7 @@ const useStyles = makeStyles((theme) => ({
   },
   previewText: (props) => ({
     fontSize: 12,
-    color: props.unread ? "#000000" : "#9CADC8",
+    color: props.unread ? theme.textColor : theme.disabledColor,
     letterSpacing: -0.17,
     fontWeight: props.unread ? "bold" : "regular",
   }),
@@ -25,8 +25,8 @@ const StyledBadge = withStyles((theme) => ({
   badge: {
     right: -3,
     top: 25,
-    marginRight: "25px",
-    padding: "0 4px",
+    marginRight: theme.spacing(8),
+    padding: theme.spacing(0, 1),
     fontWeight: "bold",
   },
 }))(Badge);
