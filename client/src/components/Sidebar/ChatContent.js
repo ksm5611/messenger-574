@@ -14,17 +14,12 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: "bold",
     letterSpacing: -0.2,
   },
-  previewText: {
+  previewText: (props) => ({
     fontSize: 12,
-    color: "#9CADC8",
+    color: props.unread ? "#000000" : "#9CADC8",
     letterSpacing: -0.17,
-  },
-  unreadPreviewText: {
-    fontSize: 12,
-    color: "#000000",
-    letterSpacing: -0.17,
-    fontWeight: "bold",
-  },
+    fontWeight: props.unread ? "bold" : "regular",
+  }),
 }));
 const StyledBadge = withStyles((theme) => ({
   badge: {
@@ -37,7 +32,10 @@ const StyledBadge = withStyles((theme) => ({
 }))(Badge);
 
 const ChatContent = (props) => {
-  const classes = useStyles();
+  const styleProps = {
+    unread: props.unReadMessageCounts > 0,
+  };
+  const classes = useStyles(styleProps);
   const { conversation, unReadMessageCounts } = props;
   const { latestMessageText, otherUser } = conversation;
 
@@ -47,15 +45,9 @@ const ChatContent = (props) => {
         <Typography className={classes.username}>
           {otherUser.username}
         </Typography>
-        {unReadMessageCounts > 0 ? (
-          <Typography className={classes.unreadPreviewText}>
-            {latestMessageText}
-          </Typography>
-        ) : (
-          <Typography className={classes.previewText}>
-            {latestMessageText}
-          </Typography>
-        )}
+        <Typography className={classes.previewText}>
+          {latestMessageText}
+        </Typography>
       </Box>
       <StyledBadge
         color="primary"
