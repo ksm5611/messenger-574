@@ -70,14 +70,10 @@ export const addConversation = (recipientId, newMessage) => {
 };
 
 // read message when the user open the conversation
-export const readMessages = (
-  conversationId,
-  messageIds,
-  latestReadMessageId
-) => {
+export const readMessages = (conversationId, messages, latestReadMessageId) => {
   return {
     type: READ_MESSAGES,
-    payload: { conversationId, messageIds, latestReadMessageId },
+    payload: { conversationId, messages, latestReadMessageId },
   };
 };
 

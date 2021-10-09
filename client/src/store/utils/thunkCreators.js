@@ -128,15 +128,14 @@ export const markAsRead = (conversationId, senderId) => async (dispatch) => {
       conversationId: conversationId,
       senderId: senderId,
     });
-    const messageIds = data.messages.map((message) => message.id);
     socket.emit("read-message", {
       senderId,
-      messageIds: messageIds,
+      messages: data.messages,
       conversationId,
       latestReadMessageId: data.latestReadMessageId,
     });
 
-    dispatch(readMessages(conversationId, messageIds));
+    dispatch(readMessages(conversationId, data.messages));
   } catch (error) {
     console.error(error);
   }

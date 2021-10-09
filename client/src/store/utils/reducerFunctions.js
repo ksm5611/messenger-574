@@ -87,20 +87,15 @@ export const addNewConvoToStore = (state, recipientId, message) => {
 // to update isRead to true
 
 export const readMessageFromconvoToStore = (state, payload) => {
-  const { conversationId, messageIds, latestReadMessageId } = payload;
+  const { conversationId, messages, latestReadMessageId } = payload;
   return state.map((convo) => {
     if (convo.id === conversationId) {
-      if (latestReadMessageId) {
-        convo.latestReadMessageId = latestReadMessageId;
-      }
       const newConvo = { ...convo };
-      newConvo.messages = convo.messages.map((msg) => {
-        if (messageIds.includes(msg.id)) {
-          return { ...msg, isRead: true };
-        }
-        return msg;
-      });
+      if (latestReadMessageId) {
+        newConvo.latestReadMessageId = latestReadMessageId;
+      }
 
+      newConvo.messages = messages;
       return newConvo;
     }
     return convo;

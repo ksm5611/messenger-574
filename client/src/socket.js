@@ -25,11 +25,7 @@ socket.on("connect", () => {
 
   socket.on("read-message", (data) => {
     store.dispatch(
-      readMessages(
-        data.messageIds,
-        data.conversationId,
-        data.latestReadMessageId
-      )
+      readMessages(data.conversationId, data.messages, data.latestReadMessageId)
     );
   });
 });

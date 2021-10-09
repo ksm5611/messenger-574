@@ -53,7 +53,7 @@ io.on("connection", (socket) => {
 
   socket.on("read-message", (data) => {
     io.sockets.in(data.senderId).emit("read-message", {
-      messageIds: data.messageIds,
+      messages: data.messages,
       conversationId: data.conversationId,
       latestReadMessageId: data.latestReadMessageId,
     });
