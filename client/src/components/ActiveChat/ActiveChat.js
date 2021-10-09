@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Box } from "@material-ui/core";
 import { Input, Header, Messages } from "./index";
@@ -21,35 +21,20 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-// for tracking previous value
-const usePrevious = (value) => {
-  const ref = useRef();
-  useEffect(() => {
-    ref.current = value;
-  });
-  return ref.current;
-};
-
 const ActiveChat = (props) => {
   const classes = useStyles();
   const { user, readMessages } = props;
   const conversation = props.conversation || {};
 
-  //current message count
-  const totalMessages = conversation.messages
-    ? conversation.messages.length
-    : 0;
-
-  //previous message count
-  const previousMessages = usePrevious(totalMessages);
   const conversationId = conversation.id || null;
   const senderId = conversation.otherUser ? conversation.otherUser.id : null;
 
+  //changed to isNewMessage
   useEffect(() => {
-    if (conversationId && senderId && totalMessages !== previousMessages) {
+    if (conversationId && senderId && conversation.isNewMessage) {
       readMessages(conversationId, senderId);
     }
-  }, [readMessages, totalMessages, previousMessages, conversationId, senderId]);
+  }, [readMessages, conversation.isNewMessage, conversationId, senderId]);
   return (
     <Box className={classes.root}>
       {conversation.otherUser && (
