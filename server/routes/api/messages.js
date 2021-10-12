@@ -43,4 +43,39 @@ router.post("/", async (req, res, next) => {
   }
 });
 
+router.put("/readMessages", async (req, res, next) => {
+  const { conversationId, senderId } = req.body;
+  try {
+    if (!req.user) {
+      return res.sendStatus(401);
+    }
+    await Message.update(
+      { isRead: true },
+      {
+        where: {
+          conversationId,
+          senderId,
+        },
+      }
+    );
+
+    const messages = await Message.findAll({
+      where: { conversationId },
+      order: [["createdAt", "ASC"]],
+    });
+    // find senderId to update badge when already read
+    const latestMessage = await Message.findOne({
+      where: { conversationId, senderId },
+      order: [["createdAt", "DESC"]],
+    });
+
+    res.json({
+      messages,
+      latestReadMessageId: latestMessage.id,
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
 module.exports = router;

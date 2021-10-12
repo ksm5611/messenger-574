@@ -8,16 +8,22 @@ export const addMessageToStore = (state, payload) => {
       messages: [message],
     };
     newConvo.latestMessageText = message.text;
+    newConvo.isNewMessage = true;
     return [newConvo, ...state];
   }
-
-  return state.map((convo) => {
-    if (convo.id === message.conversationId) {
-      convo.messages.push(message);
-      convo.latestMessageText = message.text;
-      return convo;
+  //added isNewMessage to track active conversation
+  return state.map((conv) => {
+    if (conv.id === message.conversationId) {
+      const newConvo = { ...conv };
+      newConvo.messages = newConvo.messages.filter(
+        (msg) => msg.id !== message.id
+      );
+      newConvo.messages.push(message);
+      newConvo.latestMessageText = message.text;
+      newConvo.isNewMessage = true;
+      return newConvo;
     } else {
-      return convo;
+      return conv;
     }
   });
 };
@@ -69,12 +75,31 @@ export const addSearchedUsersToStore = (state, users) => {
 export const addNewConvoToStore = (state, recipientId, message) => {
   return state.map((convo) => {
     if (convo.otherUser.id === recipientId) {
-      convo.id = message.conversationId;
-      convo.messages.push(message);
-      convo.latestMessageText = message.text;
-      return convo;
+      const newConv = { ...convo };
+      newConv.id = message.conversationId;
+      newConv.messages = [...newConv.messages, message];
+      newConv.latestMessageText = message.text;
+      return newConv;
     } else {
       return convo;
     }
+  });
+};
+
+// to update isRead to true
+
+export const readMessageFromconvoToStore = (state, payload) => {
+  const { conversationId, messages, latestReadMessageId } = payload;
+  return state.map((convo) => {
+    if (convo.id === conversationId) {
+      const newConvo = { ...convo };
+      if (latestReadMessageId) {
+        newConvo.latestReadMessageId = latestReadMessageId;
+      }
+      newConvo.isNewMessage = false;
+      newConvo.messages = messages;
+      return newConvo;
+    }
+    return convo;
   });
 };

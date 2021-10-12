@@ -40,10 +40,22 @@ io.on("connection", (socket) => {
     socket.broadcast.emit("add-online-user", id);
   });
 
+  socket.on("join", (id) => {
+    socket.join(id);
+  });
+
   socket.on("new-message", (data) => {
-    socket.broadcast.emit("new-message", {
+    io.sockets.in(data.recipientId).emit("new-message", {
       message: data.message,
       sender: data.sender,
+    });
+  });
+
+  socket.on("read-message", (data) => {
+    io.sockets.in(data.senderId).emit("read-message", {
+      messages: data.messages,
+      conversationId: data.conversationId,
+      latestReadMessageId: data.latestReadMessageId,
     });
   });
 

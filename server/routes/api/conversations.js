@@ -3,6 +3,24 @@ const { User, Conversation, Message } = require("../../db/models");
 const { Op } = require("sequelize");
 const onlineUsers = require("../../onlineUsers");
 
+const findLatestMessageId = (messages, senderId) => {
+  let latestMessageId = null;
+  let timeStamp = 0;
+
+  messages.forEach((message) => {
+    if (
+      message.senderId !== senderId &&
+      message.isRead &&
+      message.createdAt > timeStamp
+    ) {
+      timeStamp = message.createdAt;
+      latestMessageId = message.id;
+    }
+  });
+
+  return latestMessageId;
+};
+
 // get all conversations for a user, include latest message text for preview, and all messages
 // include other user model so we have info on username/profile pic (don't include current user info)
 router.get("/", async (req, res, next) => {
@@ -69,6 +87,11 @@ router.get("/", async (req, res, next) => {
 
       // set properties for notification count and latest message preview
       convoJSON.latestMessageText = convoJSON.messages[0].text;
+      convoJSON.latestReadMessageId = findLatestMessageId(
+        convoJSON.messages,
+        convoJSON.otherUser.id
+      );
+
       conversations[i] = convoJSON;
     }
 
