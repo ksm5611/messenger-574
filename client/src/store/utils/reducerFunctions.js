@@ -8,9 +8,10 @@ export const addMessageToStore = (state, payload) => {
       messages: [message],
     };
     newConvo.latestMessageText = message.text;
+    newConvo.isNewMessage = true;
     return [newConvo, ...state];
   }
-
+  //added isNewMessage to track active conversation
   return state.map((conv) => {
     if (conv.id === message.conversationId) {
       const newConvo = { ...conv };
@@ -19,6 +20,7 @@ export const addMessageToStore = (state, payload) => {
       );
       newConvo.messages.push(message);
       newConvo.latestMessageText = message.text;
+      newConvo.isNewMessage = true;
       return newConvo;
     } else {
       return conv;
@@ -81,5 +83,23 @@ export const addNewConvoToStore = (state, recipientId, message) => {
     } else {
       return convo;
     }
+  });
+};
+
+// to update isRead to true
+
+export const readMessageFromconvoToStore = (state, payload) => {
+  const { conversationId, messages, latestReadMessageId } = payload;
+  return state.map((convo) => {
+    if (convo.id === conversationId) {
+      const newConvo = { ...convo };
+      if (latestReadMessageId) {
+        newConvo.latestReadMessageId = latestReadMessageId;
+      }
+      newConvo.isNewMessage = false;
+      newConvo.messages = messages;
+      return newConvo;
+    }
+    return convo;
   });
 };

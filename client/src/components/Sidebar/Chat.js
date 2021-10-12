@@ -4,6 +4,7 @@ import { BadgeAvatar, ChatContent } from "../Sidebar";
 import { makeStyles } from "@material-ui/core/styles";
 import { setActiveChat } from "../../store/activeConversation";
 import { connect } from "react-redux";
+import { markAsRead } from "../../store/utils/thunkCreators";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -21,11 +22,13 @@ const useStyles = makeStyles((theme) => ({
 
 const Chat = (props) => {
   const classes = useStyles();
-  const { conversation } = props;
+  const { conversation, unReadMessageCounts, readMessages, setActiveChat } =
+    props;
   const { otherUser } = conversation;
 
   const handleClick = async (conversation) => {
-    await props.setActiveChat(conversation.otherUser.username);
+    await readMessages(conversation.id, conversation.otherUser.id);
+    await setActiveChat(conversation.otherUser.username);
   };
 
   return (
@@ -35,10 +38,30 @@ const Chat = (props) => {
         username={otherUser.username}
         online={otherUser.online}
         sidebar={true}
+        unReadMessageCounts={unReadMessageCounts}
       />
-      <ChatContent conversation={conversation} />
+      <ChatContent
+        conversation={conversation}
+        unReadMessageCounts={unReadMessageCounts}
+      />
     </Box>
   );
+};
+
+// if we are using selector for example Reselect it will memoize the result
+const mapStateToProps = (state, ownProps) => {
+  const { conversation } = ownProps;
+  const { otherUser } = conversation;
+  let counting = 0;
+  conversation.messages.forEach((message) => {
+    if (otherUser.id === message.senderId && message.isRead === false) {
+      return counting++;
+    }
+  });
+
+  return {
+    unReadMessageCounts: counting,
+  };
 };
 
 const mapDispatchToProps = (dispatch) => {
@@ -46,7 +69,10 @@ const mapDispatchToProps = (dispatch) => {
     setActiveChat: (id) => {
       dispatch(setActiveChat(id));
     },
+    readMessages: (conversationId, senderId) => {
+      dispatch(markAsRead(conversationId, senderId));
+    },
   };
 };
 
-export default connect(null, mapDispatchToProps)(Chat);
+export default connect(mapStateToProps, mapDispatchToProps)(Chat);

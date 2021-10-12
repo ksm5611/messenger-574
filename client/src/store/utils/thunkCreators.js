@@ -5,6 +5,7 @@ import {
   addConversation,
   setNewMessage,
   setSearchedUsers,
+  readMessages,
 } from "../conversations";
 import { gotUser, setFetchingStatus } from "../user";
 
@@ -81,6 +82,7 @@ export const fetchConversations = () => async (dispatch) => {
 };
 
 const saveMessage = async (body) => {
+  console.log("post message body", body);
   const { data } = await axios.post("/api/messages", body);
   return data;
 };
@@ -114,6 +116,28 @@ export const searchUsers = (searchTerm) => async (dispatch) => {
   try {
     const { data } = await axios.get(`/api/users/${searchTerm}`);
     dispatch(setSearchedUsers(data));
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+// to mark isRead to true then, notify to sender when user clicked conversation
+
+export const markAsRead = (conversationId, senderId) => async (dispatch) => {
+  try {
+    const { data } = await axios.put(`/api/messages/readMessages`, {
+      conversationId: conversationId,
+      senderId: senderId,
+    });
+    console.log("here");
+    socket.emit("read-message", {
+      senderId,
+      messages: data.messages,
+      conversationId,
+      latestReadMessageId: data.latestReadMessageId,
+    });
+
+    dispatch(readMessages(conversationId, data.messages));
   } catch (error) {
     console.error(error);
   }

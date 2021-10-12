@@ -1,6 +1,7 @@
 import React from "react";
 import { Box, Typography } from "@material-ui/core";
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles, withStyles } from "@material-ui/core/styles";
+import Badge from "@material-ui/core/Badge";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -13,17 +14,29 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: "bold",
     letterSpacing: -0.2,
   },
-  previewText: {
+  previewText: (props) => ({
     fontSize: 12,
-    color: "#9CADC8",
+    color: props.unread ? theme.textColor : theme.disabledColor,
     letterSpacing: -0.17,
-  },
+    fontWeight: props.unread ? "bold" : "regular",
+  }),
 }));
+const StyledBadge = withStyles((theme) => ({
+  badge: {
+    right: -3,
+    top: 25,
+    marginRight: theme.spacing(8),
+    padding: theme.spacing(0, 1),
+    fontWeight: "bold",
+  },
+}))(Badge);
 
 const ChatContent = (props) => {
-  const classes = useStyles();
-
-  const { conversation } = props;
+  const styleProps = {
+    unread: props.unReadMessageCounts > 0,
+  };
+  const classes = useStyles(styleProps);
+  const { conversation, unReadMessageCounts } = props;
   const { latestMessageText, otherUser } = conversation;
 
   return (
@@ -36,6 +49,11 @@ const ChatContent = (props) => {
           {latestMessageText}
         </Typography>
       </Box>
+      <StyledBadge
+        color="primary"
+        badgeContent={unReadMessageCounts}
+        max={999}
+      />
     </Box>
   );
 };
